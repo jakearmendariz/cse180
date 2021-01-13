@@ -29,7 +29,7 @@ CREATE TABLE Employees (
     marketID INT,
     hireDate DATE,
     level CHAR(1),
-    stillEmployed BOOLEAN
+    stillEmployed BOOLEAN,
     FOREIGN KEY (marketID) REFERENCES Markets(marketID)
 );
 CREATE TABLE ShoppingTrips (
@@ -39,10 +39,10 @@ CREATE TABLE ShoppingTrips (
     checkStand INT,
     checkerID INT,
     payType CHAR(1),
-    paymentValid BOOLEAN
-    PRIMARY KEY(shopperID, tripTimestamp)
-    FOREIGN KEY (shopperID) REFERENCES Shoppers(shopperID)
-    FOREIGN KEY (marketID) REFERENCES Markets(marketID)
+    paymentValid BOOLEAN,
+    PRIMARY KEY(shopperID, tripTimestamp),
+    FOREIGN KEY (shopperID) REFERENCES Shoppers(shopperID),
+    FOREIGN KEY (marketID) REFERENCES Markets(marketID),
     FOREIGN KEY (checkerID) REFERENCES Employees(empID)
 );
 CREATE TABLE Purchases (
@@ -50,7 +50,7 @@ CREATE TABLE Purchases (
     tripTimestamp TIMESTAMP,
     productID INT, 
     quantity INT,
-    paidPrice NUMERIC(5, 2)
-    PRIMARY KEY(shopperID, tripTimestamp, productID)
+    paidPrice NUMERIC(5, 2),
+    PRIMARY KEY(shopperID, tripTimestamp, productID),
     FOREIGN KEY (shopperID, tripTimestamp) REFERENCES ShoppingTrips(shopperID, tripTimestamp)
 );
