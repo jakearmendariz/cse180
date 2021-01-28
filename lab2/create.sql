@@ -15,6 +15,7 @@ CREATE TABLE Shoppers (
 	joinDate DATE,
         status CHAR(1),
 	PRIMARY KEY (shopperID)
+	CONSTRAINT a_shopper UNIQUE (shopperName, address)
 );
 -- shopperID INTEGER PRIMARY KEY is also correct
 
@@ -23,8 +24,9 @@ CREATE TABLE Products (
 	productID INTEGER, 
 	productName VARCHAR(40), 
 	manufacturer VARCHAR(40),
-        regularPrice NUMERIC(5,2),
+        regularPrice NUMERIC(5,2) NOT NULL,
 	PRIMARY KEY (productID)
+	CONSTRAINT a_product UNIQUE (productName, manufacturer)
 );
 --productID INTEGER PRIMARY KEY is also correct 
 -- regularPrice DECIMAL(5,2) is also correct
@@ -32,9 +34,9 @@ CREATE TABLE Products (
 -- Markets(marketID, address, managerID, numCheckStands)
 CREATE TABLE Markets (
 	marketID INTEGER,
-	address VARCHAR(60),
+	address VARCHAR(60) UNIQUE,
         managerID INTEGER,
-	numCheckStands INTEGER,
+	numCheckStands INTEGER NOT NULL,
 	PRIMARY KEY (marketID)
 );
 -- marketID INTEGER PRIMARY KEY is also correct
@@ -46,7 +48,7 @@ CREATE TABLE Employees (
         marketID INTEGER,
 	hireDate DATE,
 	level CHAR(1),
-	stillEmployed BOOLEAN,
+	stillEmployed BOOLEAN NOT NULL,
 	PRIMARY KEY (empID),
 	FOREIGN KEY (marketID) REFERENCES Markets
 );
