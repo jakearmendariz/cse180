@@ -55,3 +55,4 @@ CREATE TABLE Purchases (
     FOREIGN KEY (shopperID, tripTimestamp) REFERENCES ShoppingTrips(shopperID, tripTimestamp)
     FOREIGN KEY (productID) REFERENCES Products(productID)
 );
+

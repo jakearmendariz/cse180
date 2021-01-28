@@ -13,7 +13,7 @@ CREATE TABLE Shoppers (
 	shopperName VARCHAR(40), 
 	address VARCHAR(60), 
 	joinDate DATE,
-        status CHAR(1),
+    status CHAR(1),
 	PRIMARY KEY (shopperID)
 	CONSTRAINT a_shopper UNIQUE (shopperName, address)
 );
@@ -24,7 +24,7 @@ CREATE TABLE Products (
 	productID INTEGER, 
 	productName VARCHAR(40), 
 	manufacturer VARCHAR(40),
-        regularPrice NUMERIC(5,2) NOT NULL,
+    regularPrice NUMERIC(5,2) NOT NULL,
 	PRIMARY KEY (productID)
 	CONSTRAINT a_product UNIQUE (productName, manufacturer)
 );
@@ -35,7 +35,7 @@ CREATE TABLE Products (
 CREATE TABLE Markets (
 	marketID INTEGER,
 	address VARCHAR(60) UNIQUE,
-        managerID INTEGER,
+    managerID INTEGER,
 	numCheckStands INTEGER NOT NULL,
 	PRIMARY KEY (marketID)
 );
@@ -44,8 +44,8 @@ CREATE TABLE Markets (
 -- Employees(empID, empName, marketID, hireDate, level, stillEmployed)
 CREATE TABLE Employees (
 	empID INTEGER,
-        empName VARCHAR(40),
-        marketID INTEGER,
+	empName VARCHAR(40),
+	marketID INTEGER,
 	hireDate DATE,
 	level CHAR(1),
 	stillEmployed BOOLEAN NOT NULL,
@@ -60,14 +60,14 @@ CREATE TABLE ShoppingTrips (
 	shopperID INTEGER,
 	tripTimestamp TIMESTAMP,
 	marketID INTEGER,
-        checkStand INTEGER,
-        checkerID INTEGER,
+	checkStand INTEGER,
+	checkerID INTEGER,
 	payType CHAR(1),
 	paymentValid BOOLEAN,
-        PRIMARY KEY (shopperID, tripTimeStamp),
+	PRIMARY KEY (shopperID, tripTimeStamp),
 	FOREIGN KEY (shopperID) REFERENCES Shoppers,
 	FOREIGN KEY (marketID) REFERENCES Markets,
-        FOREIGN KEY (checkerID) REFERENCES Employees       
+	FOREIGN KEY (checkerID) REFERENCES Employees(empID)       
 ); 
 -- FOREIGN KEY (shopperID) REFERENCES Shoppers(shopperID) is also correct
 -- FOREIGN KEY (marketID) REFERENCES Markets (marketID) is also correct
@@ -80,8 +80,8 @@ CREATE TABLE Purchases (
 	productID INTEGER,
 	quantity INTEGER,
 	paidPrice NUMERIC(5,2),
-        PRIMARY KEY (shopperID, tripTimeStamp, productID),
-        FOREIGN KEY (shopperID, tripTimestamp) REFERENCES ShoppingTrips,
+	PRIMARY KEY (shopperID, tripTimeStamp, productID),
+	FOREIGN KEY (shopperID, tripTimestamp) REFERENCES ShoppingTrips,
 	FOREIGN KEY (productID) REFERENCES Products
 );
 -- paidPrice DECIMAL (5,2) is also correct
