@@ -14,7 +14,7 @@ CREATE TABLE Shoppers (
 	address VARCHAR(60), 
 	joinDate DATE,
     status CHAR(1),
-	PRIMARY KEY (shopperID)
+	PRIMARY KEY (shopperID),
 	CONSTRAINT a_shopper UNIQUE (shopperName, address)
 );
 -- shopperID INTEGER PRIMARY KEY is also correct
@@ -25,7 +25,7 @@ CREATE TABLE Products (
 	productName VARCHAR(40), 
 	manufacturer VARCHAR(40),
     regularPrice NUMERIC(5,2) NOT NULL,
-	PRIMARY KEY (productID)
+	PRIMARY KEY (productID),
 	CONSTRAINT a_product UNIQUE (productName, manufacturer)
 );
 --productID INTEGER PRIMARY KEY is also correct 
