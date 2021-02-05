@@ -9,7 +9,7 @@
 -- No duplicates should appear in your result.
 
 --  Problem! This is only distinct for marketID, there should be distinct tuples not one attirbute
-SELECT DISTINCT m.marketID, m.numCheckStands, st.checkStand
+SELECT m.marketID, m.numCheckStands, st.checkStand
 FROM Markets m, ShoppingTrips st
 WHERE m.marketID = st.marketID 
   AND st.checkStand > m.numCheckStands OR st.checkStand < 1;
