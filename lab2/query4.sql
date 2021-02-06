@@ -7,5 +7,5 @@ SELECT DISTINCT sh.shopperID as "sid", sh.shopperName as "sname", sh.address as 
 FROM Shoppers sh, ShoppingTrips st
 WHERE st.shopperID = sh.shopperID
   AND st.tripTimestamp > TIMESTAMP '2019-10-28 15:00:00'
-  AND st.checkerID LIKE "Emma Wang";
+  AND st.checkerID = 'Emma Wang';
   
