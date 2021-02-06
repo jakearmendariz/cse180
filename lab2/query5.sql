@@ -17,15 +17,12 @@ SELECT sh.shopperName, pr.productName, p.paidPrice
 FROM Purchases p, Products pr, Shopper sh, ShoppingTrip st
 WHERE p.productID = pr.productID
   AND p.shopperID = sh.shopperID
+  AND st.shopperID = p.shopperID
+  AND st.timestamp = p.timestamp
+  AND st.payType IS NOT NULL
   AND p.quantity > 3
-  AND DATE(p.tripTimestamp) = DATE('2020-02-5')
-  AND p.paidPrice < pr.regularPrice
-  AND IS NOT NULL (
-    SELECT st.payType
-    FROM ShoppingTrips st
-    WHERE st.shopperID = p.shopperID
-        AND st.timestamp = p.timestamp
-  )
+  AND DATE(p.tripTimestamp) = DATE("2020-02-5")
+  AND p.paidPrice < pr.regularPrice;
 
 
 
