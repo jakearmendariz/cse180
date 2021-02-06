@@ -8,4 +8,4 @@
 SELECT DISTINCT productName, manufacturer, regularPrice
 FROM Products
 WHERE productName LIKE '%Acme1%' And regularPrice > 9.98
-ORDER BY manufacturer ASC, regularPrice DEC;
+ORDER BY manufacturer ASC, regularPrice DESC;

@@ -6,5 +6,5 @@ SELECT p1.productID, p1.manufacturer, p1.regularPrice
 FROM Products p1
 WHERE (SELECT MAX(p2.regularPrice)
        FROM Products p2
-       WHERE p2.manufacturer == p1.manufacturer
+       WHERE p2.manufacturer = p1.manufacturer
          AND p1.productID <> p1.productID);

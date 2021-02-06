@@ -14,7 +14,7 @@
 
 
 SELECT sh.shopperName, pr.productName, p.paidPrice
-FROM Purchases p, Products pr, Shopper sh
+FROM Purchases p, Products pr, Shopper sh, ShoppingTrip st
 WHERE p.productID = pr.productID
   AND p.shopperID = sh.shopperID
   AND p.quantity > 3
