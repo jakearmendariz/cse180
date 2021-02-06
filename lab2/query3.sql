@@ -7,4 +7,4 @@ FROM Products p1
 WHERE p1.regularPrice >= (SELECT MAX(p2.regularPrice)
        FROM Products p2
        WHERE p2.manufacturer = p1.manufacturer)
-GROUP BY p1.manufacturer;
+GROUP BY p1.manufacturer, p1.regularPrice;
