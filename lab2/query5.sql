@@ -18,9 +18,9 @@ FROM Purchases p, Products pr, Shoppers sh, ShoppingTrips st
 WHERE p.productID = pr.productID
   AND p.shopperID = sh.shopperID
   AND st.shopperID = p.shopperID
-  AND st.timestamp = p.timestamp
+  AND st.TripTimestamp = p.TripTimestamp
   AND st.payType IS NOT NULL
   AND p.quantity > 3
-  AND DATE(p.tripTimestamp) = DATE("2020-02-5")
+  AND DATE(p.tripTimestamp) = DATE '2020-02-5'
   AND p.paidPrice < pr.regularPrice;
 
