@@ -14,7 +14,7 @@
 
 
 SELECT sh.shopperName, pr.productName, p.paidPrice
-FROM Purchases p, Products pr, Shoppers sh, ShoppingTrip st
+FROM Purchases p, Products pr, Shoppers sh, ShoppingTrips st
 WHERE p.productID = pr.productID
   AND p.shopperID = sh.shopperID
   AND st.shopperID = p.shopperID
