@@ -7,5 +7,6 @@
 
 SELECT DISTINCT productName, manufacturer, regularPrice
 FROM Products
-WHERE productName LIKE '%Acme%' AND regularPrice > 9.98
-ORDER BY manufacturer ASC, regularPrice DESC;
+WHERE productName LIKE '%Acme%' 
+    AND regularPrice > 9.98
+    ORDER BY manufacturer ASC, regularPrice DESC;
