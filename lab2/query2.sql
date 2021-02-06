@@ -5,8 +5,8 @@
 -- decreasing regularPrice.
 -- No duplicates should appear in your result.
 
-SELECT DISTINCT productName, manufacturer, regularPrice
-FROM Products
-WHERE productName LIKE '%Acme%' 
-    AND regularPrice > 9.98
-    ORDER BY manufacturer ASC, regularPrice DESC;
+SELECT DISTINCT pr.productName, pr.manufacturer, pr.regularPrice
+FROM Products pr
+WHERE pr.productName LIKE '%Acme%' 
+    AND pr.regularPrice > 9.98
+ORDER BY pr.manufacturer ASC, pr.regularPrice DESC;
