@@ -18,6 +18,6 @@ WHERE st.shopperID = sh.shopperID
     WHERE st.shopperID = st1.shopperID 
       AND st.marketID <> st1.marketID
     GROUP BY st1.shopperID
-    HAVING COUNT(DISTINCT st1.marketID) > 4
+    HAVING COUNT(DISTINCT st1.marketID) > 2
   )
 GROUP BY sh.shopperID, sh.shopperName, sh.address;
