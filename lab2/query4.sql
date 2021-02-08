@@ -12,5 +12,6 @@ WHERE st.shopperID = sh.shopperID
                       FROM Employees emp
                       WHERE st.checkerID = emp.empID
                     )
+GROUP BY sh.shopperID, sh.shopperName, sh.address
 HAVING COUNT(*) > 1;
   
