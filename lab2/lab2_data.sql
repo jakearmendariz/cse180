@@ -20,6 +20,7 @@ COPY Shoppers FROM stdin USING DELIMITERS '|';
 COPY Products FROM stdin USING DELIMITERS '|';
 110|Bowl|The Acme Bowl Company|145.00
 120|Pan|Real Pan Makers Company|155.89
+129|yoloswag|Real Pan Makers Company|155.89
 121|Cooker|Ever Stronger Cookers Company|199.99
 153|Dishes|Light Weight Dishes Company|334.34
 162|Noodles|Consolidated Noodles|110.98

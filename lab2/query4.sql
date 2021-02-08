@@ -11,5 +11,6 @@ WHERE st.shopperID = sh.shopperID
                       SELECT emp.empName
                       FROM Employees emp
                       WHERE st.checkerID = emp.empID
-                    );
+                    )
+HAVING COUNT(*) > 1;
   
