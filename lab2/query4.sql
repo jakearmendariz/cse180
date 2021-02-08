@@ -11,8 +11,8 @@ WHERE st.shopperID = sh.shopperID
     SELECT emp.empName
     FROM Employees emp
     WHERE st.checkerID = emp.empID
-      AND (
-        SELECT st1.shopperID
+      AND st1.shopperID = (
+        SELECT DISTINCT st1.shopperID
         FROM ShoppingTrips st1
         WHERE st.shopperID = st1.shopperID 
           AND st.marketID <> st1.marketID
