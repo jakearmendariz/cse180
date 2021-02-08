@@ -5,7 +5,7 @@
 -- decreasing regularPrice.
 -- No duplicates should appear in your result.
 
-SELECT DISTINCT pr.productName, pr.manufacturer, pr.regularPrice
+SELECT pr.productName, pr.manufacturer, pr.regularPrice
 FROM Products pr
 WHERE pr.manufacturer LIKE '%Acme%'
     AND pr.regularPrice > 9.98

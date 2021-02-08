@@ -3,7 +3,7 @@
 -- Your output should provide the shopper’s ID, name and address, but the attribute names in your result
 -- should appear as sid, sname and saddress. No duplicates should appear in your result.
 
-SELECT DISTINCT sh.shopperID as "sid", sh.shopperName as "sname", sh.address as "saddress"
+SELECT sh.shopperID as "sid", sh.shopperName as "sname", sh.address as "saddress"
 FROM Shoppers sh, ShoppingTrips st
 WHERE st.shopperID = sh.shopperID
   AND st.tripTimestamp > TIMESTAMP '2019-10-28 15:00:00'
@@ -11,12 +11,12 @@ WHERE st.shopperID = sh.shopperID
     SELECT emp.empName
     FROM Employees emp
     WHERE st.checkerID = emp.empID
-      AND st1.shopperID = (
-        SELECT DISTINCT st1.shopperID
+      AND EXISTS (
+        SELECT st1.shopperID
         FROM ShoppingTrips st1
         WHERE st.shopperID = st1.shopperID 
           AND st.marketID <> st1.marketID
           AND st1.checkerID = emp.empID
+          AND st1.tripTimestamp > TIMESTAMP '2019-10-28 15:00:00'
       )
   )
-GROUP BY sh.shopperID, sh.shopperName, sh.address;
