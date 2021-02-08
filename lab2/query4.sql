@@ -12,11 +12,12 @@ WHERE st.shopperID = sh.shopperID
     FROM Employees emp
     WHERE st.checkerID = emp.empID
   )
-  AND st.marketID IN (
-    SELECT st1.marketID
+  AND st.shopperID IN (
+    SELECT st1.shopperID
     FROM ShoppingTrips st1
     WHERE st.shopperID = st1.shopperID 
       AND st.marketID <> st1.marketID
-    HAVING COUNT(*) > 4
+    GROUP BY st1.shopperID
+    HAVING COUNT(DISTINCT st1.marketID) > 4
   )
-GROUP BY sh.shopperID, sh.shopperName, sh.address
+GROUP BY sh.shopperID, sh.shopperName, sh.address;
