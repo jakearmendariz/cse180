@@ -8,10 +8,16 @@ FROM Shoppers sh, ShoppingTrips st
 WHERE st.shopperID = sh.shopperID
   AND st.tripTimestamp > TIMESTAMP '2019-10-28 15:00:00'
   AND 'Emma Wang' = (
-                      SELECT emp.empName
-                      FROM Employees emp
-                      WHERE st.checkerID = emp.empID
-                    )
+    SELECT emp.empName
+    FROM Employees emp
+    WHERE st.checkerID = emp.empID
+  )
+  AND IN (
+    SELECT *
+    FROM ShoppingTrips st1
+    WHERE st.shopperID = st1.shopperID 
+      AND st.marketID <> st1.marketID
+    HAVING COUNT(*) > 4
+  )
 GROUP BY sh.shopperID, sh.shopperName, sh.address
 HAVING COUNT(*) > 1;
-  

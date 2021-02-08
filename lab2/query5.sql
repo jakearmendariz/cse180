@@ -23,4 +23,3 @@ WHERE p.productID = pr.productID
   AND p.quantity > 3
   AND DATE(p.tripTimestamp) = DATE '2020-02-5'
   AND p.paidPrice < pr.regularPrice;
-

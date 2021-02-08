@@ -7,6 +7,8 @@
 -- https://piazza.com/class/kjarf4olrxa7ht?cid=68
 SELECT p1.productID, p1.manufacturer, p1.regularPrice
 FROM Products p1
-WHERE p1.regularPrice >= (SELECT MAX(p2.regularPrice)
-       FROM Products p2
-       WHERE p2.manufacturer = p1.manufacturer)
+WHERE p1.regularPrice >= (
+                     SELECT MAX(p2.regularPrice)
+                     FROM Products p2
+                     WHERE p2.manufacturer = p1.manufacturer
+                     )
