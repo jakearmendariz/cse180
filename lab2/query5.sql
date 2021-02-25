@@ -20,6 +20,6 @@ WHERE p.productID = pr.productID
   AND st.shopperID = p.shopperID
   AND st.tripTimestamp = p.tripTimestamp
   AND st.payType IS NOT NULL
-  AND p.quantity > 3
+  AND p.quantity >= 3
   AND DATE(p.tripTimestamp) = DATE '2020-02-5'
   AND p.paidPrice < pr.regularPrice;
