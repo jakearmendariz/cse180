@@ -27,11 +27,11 @@ WHERE (SELECT COUNT(*)
           AND pc.tripTimestamp = p.tripTimestamp
           AND pc.productID = p.productID) = 0;
 
-UPDATE Purchases
-SET quantity = quantity + 2, paidPrice = (SELECT pc.paidPrice
-                                            FROM PurchaseChanges pc
-                                            WHERE pc.shopperID = shopperID
-                                            AND pc.tripTimestamp = tripTimestamp
-                                            AND pc.productID = productID);
+UPDATE Purchases pur
+SET quantity = quantity + 2, paidPrice = pc.paidPrice
+FROM PurchaseChanges pc
+WHERE pc.shopperID = pur.shopperID
+AND pc.tripTimestamp = pur.tripTimestamp
+AND pc.productID = pur.productID;
 
 -- COMMIT;
