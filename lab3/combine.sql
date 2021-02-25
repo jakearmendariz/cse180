@@ -16,22 +16,22 @@
 
 -- Your transaction may have multiple statements in it. The SQL constructs that we’ve already discussed in class
 -- are sufficient for you to do this part (which is one of the hardest parts of Lab3).
-START TRANSACTION SET ISOLATION LEVEL SERIALIZABLE;
+-- START TRANSACTION SET ISOLATION LEVEL SERIALIZABLE;
 
-INSERT INTO Purchases
-SELECT (pc.shopperID, pc.tripTimeStamp, pc.productID, 1, pc.paidPrice)
+INSERT INTO Purchases(shopperID, tripTimestamp, productID, quantity, paidPrice)
+SELECT pc.shopperID, pc.tripTimestamp, pc.productID, 1, pc.paidPrice
 FROM PurchaseChanges pc
 WHERE (SELECT COUNT(*)
         FROM Purchases p
         WHERE pc.shopperID = p.shopperID
-          AND pc.tripTimeStamp = p.tripTimeStamp
+          AND pc.tripTimestamp = p.tripTimestamp
           AND pc.productID = p.productID) = 0;
 
 UPDATE Purchases
 SET quantity = quantity + 2, paidPrice = (SELECT pc.paidPrice
                                             FROM PurchaseChanges pc
                                             WHERE pc.shopperID = shopperID
-                                            AND pc.tripTimeStamp = tripTimeStamp
+                                            AND pc.tripTimestamp = tripTimestamp
                                             AND pc.productID = productID);
 
-COMMIT;
+-- COMMIT;
