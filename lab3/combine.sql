@@ -16,7 +16,8 @@
 
 -- Your transaction may have multiple statements in it. The SQL constructs that we’ve already discussed in class
 -- are sufficient for you to do this part (which is one of the hardest parts of Lab3).
--- START TRANSACTION SET ISOLATION LEVEL SERIALIZABLE;
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE
 
 INSERT INTO Purchases(shopperID, tripTimestamp, productID, quantity, paidPrice)
 SELECT pc.shopperID, pc.tripTimestamp, pc.productID, 1, pc.paidPrice
@@ -34,4 +35,4 @@ WHERE pc.shopperID = pur.shopperID
 AND pc.tripTimestamp = pur.tripTimestamp
 AND pc.productID = pur.productID;
 
--- COMMIT;
+COMMIT;
