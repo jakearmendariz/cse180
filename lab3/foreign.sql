@@ -20,7 +20,7 @@
     -- that person, then the update should also be rejected.
 
 ALTER TABLE Markets
-ADD FOREIGN KEY managerID REFERENCES Employees empID
+ADD FOREIGN KEY (managerID) REFERENCES Employees (empID)
 ON DELETE RESTRICT;
 
     
@@ -30,7 +30,7 @@ ON DELETE RESTRICT;
     -- Employees tuples who have that marketID should also be updated, getting the same new value for their
     -- marketID.
 ALTER TABLE Employees
-ADD FOREIGN KEY marketID REFERENCES Markets marketID
+ADD FOREIGN KEY (marketID) REFERENCES Markets (marketID)
 ON DELETE CASCADE
 ON UPDATE CASCADE ;
 
@@ -41,6 +41,6 @@ ON UPDATE CASCADE ;
     -- marketID should also be updated, getting the same new value for their marketID.
 
 ALTER TABLE ShoppingTrips
-ADD FOREIGN KEY marketID REFERENCES Markets marketID
+ADD FOREIGN KEY (marketID) REFERENCES Markets (marketID)
 ON UPDATE CASCADE
 ON DELETE SET NULL;
