@@ -31,6 +31,6 @@ SELECT st.shopperID, st.tripTimeStamp, SUM(p.quantity * p.paidPrice) as totalCos
 FROM ShoppingTrips st, Purchases p
 WHERE p.quantity < 3
   AND p.shopperID = p.shopperID
-  AND p.tripTimeStamp = p.tripTimeStamp);
+  AND p.tripTimeStamp = p.tripTimeStamp
 GROUP BY st.shopperID, st.tripTimestamp
-HAVING SUM(p.quantity * p.paidPrice) < 100
+HAVING SUM(p.quantity * p.paidPrice) < 100;

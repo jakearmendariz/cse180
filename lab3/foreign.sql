@@ -23,7 +23,6 @@ ALTER TABLE Markets
 ADD FOREIGN KEY (managerID) REFERENCES Employees (empID)
 ON DELETE RESTRICT;
 
-    
     -- Each market (marketID) that’s in the Employees table must appear in the Markets table as a marketID.
     -- If a tuple in the Markets table is deleted, then all Employees in which that market (marketID) appears
     -- should also be deleted. If the Primary Key (marketID) of a Markets tuple is updated, then all
