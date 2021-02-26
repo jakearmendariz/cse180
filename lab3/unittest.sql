@@ -5,8 +5,8 @@
 INSERT INTO Markets(marketID, managerID)
 VALUES(0, 0);
 
-INSERT INTO Employees(empID)
-VALUES(-1);
+INSERT INTO Employees(empID, marketID)
+VALUES(-2, -1);
 
 INSERT INTO ShoppingTrips(shopperID, tripTimeStamp, marketID)
 VALUES(0, TIMESTAMP '2021-02-22', -2);
