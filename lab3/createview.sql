@@ -16,11 +16,21 @@
 -- requirement: Don’t include a shopping trip in your view unless both a) the total cost of the shopping trip is
 -- under 100, and b) quantity for every purchase in that shopping trip is less than 3.
 
+-- CREATE VIEW CheapShoppingTripCost AS
+-- SELECT st.shopperID, st.tripTimeStamp, totalCost
+-- FROM ShoppingTrips st
+-- WHERE 100 > (SELECT SUM(quantity * paidPrice) as totalCost
+--             FROM Purchases p
+--             WHERE quantity < 3
+--               AND p.shopperID = shopperID
+--               AND p.tripTimeStamp = tripTimeStamp);
+
+
 CREATE VIEW CheapShoppingTripCost AS
-SELECT st.shopperID, st.tripTimeStamp, totalCost
-FROM ShoppingTrips st
-WHERE 100 > (SELECT SUM(quantity * paidPrice) as totalCost
-            FROM Purchases p
-            WHERE quantity < 3
-              AND p.shopperID = shopperID
-              AND p.tripTimeStamp = tripTimeStamp);
+SELECT st.shopperID, st.tripTimeStamp, SUM(p.quantity * p.paidPrice) as totalCost
+FROM ShoppingTrips st, Purchases p
+WHERE p.quantity < 3
+  AND p.shopperID = p.shopperID
+  AND p.tripTimeStamp = p.tripTimeStamp);
+GROUP BY st.shopperID, st.tripTimestamp
+HAVING SUM(p.quantity * p.paidPrice) < 100
