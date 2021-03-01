@@ -3,13 +3,16 @@
 -- For each of the 3 foreign key constraints specified in section 2.3, write one unit test:
     -- o An INSERT command that violates the foreign key constraint (and elicits an error).
 INSERT INTO Markets(marketID, managerID)
-VALUES(0, 0);
+VALUES(-1, -1);
 
 INSERT INTO Employees(empID, marketID)
-VALUES(-2, -1);
+VALUES(-2, -2);
 
+-- To ensure that the shopper exists and we test the correct constraint
+INSERT INTO SHOPPERS(ShopperID)
+VALUES(-1);
 INSERT INTO ShoppingTrips(shopperID, tripTimeStamp, marketID)
-VALUES(0, TIMESTAMP '2021-02-22', -2);
+VALUES(-1, TIMESTAMP '2021-02-22', -3);
 
 -- Also, for each of the 3 general constraints, write 2 unit tests:
 
@@ -30,7 +33,7 @@ SET payType = 'J';
 -- o An UPDATE command that meets the constraint.
 UPDATE Shoppers
 SET shopperName = NULL
-WHERE joinDATE is NULL;
+WHERE joinDATE IS NULL;
 -- o An UPDATE command that violates the constraint (and elicits an error).
 UPDATE Shoppers
 SET shopperName = NULL
