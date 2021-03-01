@@ -6,29 +6,34 @@ INSERT INTO Markets(marketID, managerID)
 VALUES(-1, -1);
 
 INSERT INTO Employees(empID, marketID)
-VALUES(-2, -2);
+VALUES(-1, -1);
 
 -- To ensure that the shopper exists and we test the correct constraint
-INSERT INTO SHOPPERS(ShopperID)
-VALUES(-1);
 INSERT INTO ShoppingTrips(shopperID, tripTimeStamp, marketID)
-VALUES(-1, TIMESTAMP '2021-02-22', -3);
+VALUES(1003, TIMESTAMP '2021-02-22', -1);
 
 -- Also, for each of the 3 general constraints, write 2 unit tests:
 
 -- o An UPDATE command that meets the constraint.
 UPDATE Products
-SET regularPrice = 10;
+SET regularPrice = 10
+WHERE productID = 120;
 -- o An UPDATE command that violates the constraint (and elicits an error).
 UPDATE Products
-SET regularPrice = -10;
+SET regularPrice = -10
+WHERE productID = 120;
 
 -- o An UPDATE command that meets the constraint.
 UPDATE ShoppingTrips
-SET payType = 'N';
+SET payType = 'N'
+WHERE shopperID = 1012
+  AND tripTimestamp = TIMESTAMP '2015-11-24 11:12:48';
+
 -- o An UPDATE command that violates the constraint (and elicits an error).
 UPDATE ShoppingTrips
-SET payType = 'J';
+SET payType = 'J'
+WHERE shopperID = 1012
+  AND tripTimestamp = TIMESTAMP '2015-11-24 11:12:48';
 
 -- o An UPDATE command that meets the constraint.
 UPDATE Shoppers
