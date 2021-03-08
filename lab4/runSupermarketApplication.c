@@ -57,19 +57,17 @@ static void bad_exit(PGconn *conn)
   * of employees who work at that market.
   */
 void getMarketEmpCounts(PGconn *conn) {
-    EXEC SQL BEGIN DECLARE SECTION;
-        int marketID; int empCount;
-    EXEC SQL DECLARE c CURSOR FOR 
-        SELECT market, COUNT(*)
-        FROM EMPLOYEES
-        GROUP BY marketID;
-    EXEC SQL OPEN CURSOR c;
-    while(1) {
-        EXEC SQL FETCH c
-            INTO :marketID, :empCount;
-        if (NOT_FOUND) break;
-        printf("Market %i has %i employees", marketID, empCount);
+    PGresult *res = PQexec(conn,"SELECT market, COUNT(*) FROM EMPLOYEES GROUP BY marketID"); 
+    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+        PQclear(res);
+        return;
     }
+    int n = PQntuples(res);
+    for (int j = 0; j < n; j++)
+        printf("Market %s has %s employees",
+        PQgetvalue(res, j, 0),
+        PQgetvalue(res, j, 1) );
+    PQclear(res);
 }
 
 
@@ -93,7 +91,23 @@ void getMarketEmpCounts(PGconn *conn) {
 int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
-
+    char *query = (char*)malloc(40 * sizeof(char));
+    sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer == %s", oldProductManufacturer);
+    PGresult *res = PQexec(conn, query); 
+    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+        PQclear(res);
+        return 0;
+    }
+    char *num_replacements = PQgetvalue(res, 0, 0);
+    PQclear(res);
+    // update
+    sprintf(query, "UPDATE Products SET manufacturer = %s WHERE manufacturer == %s", newProductManufacturer, oldProductManufacturer);
+    res = PQexec(conn, query); 
+    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+        PQclear(res);
+        return 0;
+    }
+    return atoi(num_replacements);
 }
 
 
