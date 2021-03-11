@@ -127,7 +127,7 @@ int updateProductManufacturer(PGconn *conn,
     // }
     PQclear(res);
     printf("num_replacesments: %i\n", atoi(num_replacements));
-    free(query);
+    // free(query);
     return atoi(num_replacements);
 }
 
@@ -173,6 +173,7 @@ int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions)
         PQclear(res);
         return 1;
     }else {
+        printf("reduceSomePaidPrices: %s tuples\n", PQgetvalue(res, 0, 0));
         PQclear(res);
         return 1;
     }
