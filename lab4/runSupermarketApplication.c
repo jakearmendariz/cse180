@@ -59,13 +59,13 @@ static void bad_exit(PGconn *conn)
 void getMarketEmpCounts(PGconn *conn) {
     PGresult *res = PQexec(conn,"SELECT marketID, COUNT(*) FROM Employees GROUP BY marketID"); 
     if (PQresultStatus(res) != PGRES_TUPLES_OK){
-        printf("Error, in marketEmpCounts");
+        printf("Error, in marketEmpCounts\n");
         PQclear(res);
         return;
     }
     int n = PQntuples(res);
     for (int j = 0; j < n; j++)
-        printf("Market %s has %s employees",
+        printf("Market %s has %s employees\n",
         PQgetvalue(res, j, 0),
         PQgetvalue(res, j, 1) );
     PQclear(res);
@@ -92,18 +92,18 @@ void getMarketEmpCounts(PGconn *conn) {
 int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
-    PGresult *res = PQexec(conn, "BEGIN TRANSACTION"); 
-    if (PQresultStatus(res) != PGRES_COMMAND_OK){
-        printf("Error, in updateProductManufacturer, begin transaction");
-        PQclear(res);
-        return 0;
-    }
+    // PGresult *res = PQexec(conn, "BEGIN TRANSACTION"); 
+    // if (PQresultStatus(res) != PGRES_COMMAND_OK){
+    //     printf("Error, in updateProductManufacturer, begin transaction\n");
+    //     PQclear(res);
+    //     return 0;
+    // }
 
     char *query = (char*)malloc(40 * sizeof(char));
     sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer = %s", oldProductManufacturer);
-    res = PQexec(conn, query); 
+    PGresult *res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_TUPLES_OK){
-        printf("Error, in updateProductManufacturer, select clause");
+        printf("Error, in updateProductManufacturer, select clause\n");
         PQclear(res);
         return 0;
     }
@@ -114,17 +114,17 @@ int updateProductManufacturer(PGconn *conn,
     res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_COMMAND_OK){
         PQclear(res);
-        printf("Error, in updateProductManufacturer, update clause");
+        printf("Error, in updateProductManufacturer, update clause\n");
         return 0;
     }
 
     // commit
-    res = PQexec(conn, "COMMIT"); 
-    if (PQresultStatus(res) != PGRES_COMMAND_OK){
-        PQclear(res);
-        printf("Error, in updateProductManufacturer, commit");
-        return 0;
-    }
+    // res = PQexec(conn, "COMMIT"); 
+    // if (PQresultStatus(res) != PGRES_COMMAND_OK){
+    //     PQclear(res);
+    //     printf("Error, in updateProductManufacturer, commit\n");
+    //     return 0;
+    // }
     return atoi(num_replacements);
 }
 
@@ -166,7 +166,7 @@ int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions)
 
     PGresult *res = PQexec(conn,query); 
     if (PQresultStatus(res) != PGRES_COMMAND_OK){
-        printf("Error: function error");
+        printf("Error: function error\n");
         PQclear(res);
         return 1;
     }
