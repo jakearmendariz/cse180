@@ -32,13 +32,15 @@
 CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction(IN theShopperID INTEGER, numPriceReductions INTEGER)
     DECLARE subtractAbleAmount FLOAT
 BEGIN  
-    SET subtractAbleAmount = statusToSubtractable(ShopperID)
-    CREATE VIEW AS reducablePurchases
-    SELECT * FROM Purchases p WHERE p.shopperID = theShopperID 
-                                                          AND p.paidPrice = (SELECT pro.regularPrice FROM Products pro
-                                                                                                      WHERE pro.productId = p.productID)
-                              ORDER BY DESC p.paidPrice
-                              LIMIT numPriceReductions);
+    SET subtractAbleAmount = statusToSubtractable(ShopperID);
+    CREATE VIEW reducablePurchases AS
+    SELECT * FROM Purchases p 
+    WHERE p.shopperID = theShopperID 
+      AND p.paidPrice = (SELECT pro.regularPrice FROM Products pro
+                            WHERE pro.productId = p.productID)
+    ORDER BY p.paidPrice DESC
+    LIMIT numPriceReductions;
+
     UPDATE Purchases p
     SET paidPrice = paidPrice - subtractAbleAmount
     FROM reducablePurchases r
@@ -51,7 +53,7 @@ END;
 CREATE OR REPLACE FUNCTION statusToSubtractable(IN theShopperID INTEGER)
     RETURNS FLOAT
     DECLARE subtractAbleAmount FLOAT
-    DECLARE status CHAR;
+    DECLARE status NUMERIC(2,1);
 BEGIN
     SET status = (SELECT sh.status FROM sh.Shoppers WHERE sh.shopperID = theShopperID);
     IF status = 'L' THEN RETURN 0.5;
@@ -67,6 +69,34 @@ END;
 -- AND p.paidPrice < (SELECT products.regularPrice FROM Products products WHERE p.productID = products.productID)
 --     if numPriceReductions < 0 THEN BREAK
 --     ENDIF;
+
+-- Find shoppers who bought products at the same price
+-- SELECT pur.shopperID
+-- FROM Purchases pur, Products p
+-- WHERE pur.productID = p.productID
+--   AND pur.paidPrice = p.regularPrice;
+
+
+-- CREATE OR REPLACE VIEW reducablePurchases AS
+-- SELECT * FROM Purchases p 
+-- WHERE p.shopperID = 1005 
+--     AND p.paidPrice = (SELECT pro.regularPrice FROM Products pro
+--                         WHERE pro.productId = p.productID)
+-- ORDER BY p.paidPrice DESC
+-- LIMIT 3;
+
+--  UPDATE Purchases p
+--     SET paidPrice = p.paidPrice - 1
+--     FROM reducablePurchases r
+--     WHERE r.productID = p.productID
+--       AND r.shopperID = p.shopperID
+--       AND r.tripTimestamp = p.tripTimestamp;
+
+-- SELECT *
+-- FROM Purchases p, reducablePurchases r
+-- WHERE r.productID = p.productID
+--       AND r.shopperID = p.shopperID
+--       AND r.tripTimestamp = p.tripTimestamp;
    
 
 

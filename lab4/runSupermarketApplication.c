@@ -125,6 +125,8 @@ int updateProductManufacturer(PGconn *conn,
     //     printf("Error, in updateProductManufacturer, commit\n");
     //     return 0;
     // }
+    PQclear(res);
+    printf("num_replacesments: %i", atoi(num_replacements));
     return atoi(num_replacements);
 }
 
