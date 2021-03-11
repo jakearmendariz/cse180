@@ -127,6 +127,7 @@ int updateProductManufacturer(PGconn *conn,
     // }
     PQclear(res);
     printf("num_replacesments: %i", atoi(num_replacements));
+    free(query);
     return atoi(num_replacements);
 }
 
@@ -163,7 +164,7 @@ int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions)
         exit(EXIT_FAILURE);
     }
     char *query = (char*)malloc(40 * sizeof(char));
-    sprintf(query, "call reduceSomePaidPricesFunction(%i, %i)", theShopperID, numPriceReductions);
+    sprintf(query, "SELECT CALL reduceSomePaidPricesFunction(%i, %i)", theShopperID, numPriceReductions);
 
 
     PGresult *res = PQexec(conn,query); 
@@ -221,7 +222,7 @@ main(int argc, char **argv)
     /* Perform the calls to reduceSomePaidPrices described in Section 6
      * of Lab4, and print their outputs.
      */
-    reduceSomePaidPrices(conn, 1003, 2);
+    reduceSomePaidPrices(conn, 1005, 2);
     
     good_exit(conn);
     return 0;

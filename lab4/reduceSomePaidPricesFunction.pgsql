@@ -29,90 +29,155 @@
 --     ELIF p.status = 'H' THEN SET  p.paidPrice =  p.paidPrice - 2, numPriceReductions -=1
 --     ENDIF;
 
-CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction(IN theShopperID INTEGER, numPriceReductions INTEGER)
-    DECLARE subtractAbleAmount FLOAT
+CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction(theShopperID INTEGER, numPriceReductions INTEGER) RETURNS INTEGER
+AS $$
+    DECLARE 
+    subtractAbleAmount NUMERIC(2,1);
+    result INTEGER;
+    ass INTEGER;
 BEGIN  
-    SET subtractAbleAmount = statusToSubtractable(ShopperID);
-    CREATE VIEW reducablePurchases AS
-    SELECT * FROM Purchases p 
-    WHERE p.shopperID = theShopperID 
-      AND p.paidPrice = (SELECT pro.regularPrice FROM Products pro
-                            WHERE pro.productId = p.productID)
-    ORDER BY p.paidPrice DESC
-    LIMIT numPriceReductions;
+    SELECT INTO subtractAbleAmount statusToSubtractable(theShopperID);
+    EXECUTE 'CREATE OR REPLACE VIEW reducablePurchases AS
+        SELECT * FROM Purchases p 
+        WHERE p.shopperID = ' ||$1||'
+        AND p.paidPrice = (SELECT pro.regularPrice FROM Products pro
+                                WHERE pro.productId = p.productID)
+        ORDER BY p.paidPrice DESC
+        LIMIT '||$2||'';
+
+    SELECT COUNT(*) INTO result 
+    FROM reducablePurchases r, Purchases p
+    WHERE r.productID = p.productID
+      AND r.shopperID = theShopperID
+      AND r.tripTimestamp = p.tripTimestamp;
 
     UPDATE Purchases p
-    SET paidPrice = paidPrice - subtractAbleAmount
+    SET paidPrice = p.paidPrice - subtractAbleAmount
     FROM reducablePurchases r
     WHERE r.productID = p.productID
       AND r.shopperID = theShopperID
       AND r.tripTimestamp = p.tripTimestamp;
+    
+    RETURN result;
 END;
+$$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION statusToSubtractable(IN theShopperID INTEGER)
-    RETURNS FLOAT
-    DECLARE subtractAbleAmount FLOAT
-    DECLARE status NUMERIC(2,1);
+CREATE OR REPLACE FUNCTION statusToSubtractable(theShopperID INTEGER) RETURNS NUMERIC(2,1) 
+AS $$
+    DECLARE 
+    subtractAbleAmount NUMERIC(2,1);
+    status CHAR;
 BEGIN
-    SET status = (SELECT sh.status FROM sh.Shoppers WHERE sh.shopperID = theShopperID);
+    SELECT sh.status INTO status FROM Shoppers sh WHERE sh.shopperID = theShopperID;
     IF status = 'L' THEN RETURN 0.5;
     ELSEIF status = 'M' THEN RETURN 1.0;
-    ELIF status = 'H' THEN RETURN 2.0;
-    ENDIF;
+    ELSEIF status = 'H' THEN RETURN 2.0;
+    ELSE RETURN 0;
+    END IF;
 END;
+$$ LANGUAGE plpgsql;
+--------
 
+-- CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction(INTEGER, INTEGER) RETURNS INTEGER
+-- AS $$
+--     DECLARE 
+--     subtractAbleAmount NUMERIC(2,1);
+--     result INTEGER;
+-- BEGIN  
+--     SELECT INTO subtractAbleAmount statusToSubtractable($1);
+--     CREATE OR REPLACE VIEW reducablePurchases AS
+--     SELECT * FROM Purchases p 
+--     WHERE p.shopperID = $1 
+--       AND p.paidPrice = (SELECT pro.regularPrice FROM Products pro
+--                             WHERE pro.productId = p.productID)
+--     ORDER BY p.paidPrice DESC
+--     LIMIT $1;
 
-
--- UPDATE Purchases p
--- WHERE p.shopperID = shopperID 
--- AND p.paidPrice < (SELECT products.regularPrice FROM Products products WHERE p.productID = products.productID)
---     if numPriceReductions < 0 THEN BREAK
---     ENDIF;
-
--- Find shoppers who bought products at the same price
--- SELECT pur.shopperID
--- FROM Purchases pur, Products p
--- WHERE pur.productID = p.productID
---   AND pur.paidPrice = p.regularPrice;
-
-
--- CREATE OR REPLACE VIEW reducablePurchases AS
--- SELECT * FROM Purchases p 
--- WHERE p.shopperID = 1005 
---     AND p.paidPrice = (SELECT pro.regularPrice FROM Products pro
---                         WHERE pro.productId = p.productID)
--- ORDER BY p.paidPrice DESC
--- LIMIT 3;
-
---  UPDATE Purchases p
---     SET paidPrice = p.paidPrice - 1
+--     SELECT COUNT(*) INTO result 
 --     FROM reducablePurchases r
 --     WHERE r.productID = p.productID
---       AND r.shopperID = p.shopperID
+--       AND r.shopperID = theShopperID
 --       AND r.tripTimestamp = p.tripTimestamp;
 
--- SELECT *
--- FROM Purchases p, reducablePurchases r
--- WHERE r.productID = p.productID
---       AND r.shopperID = p.shopperID
+--     UPDATE Purchases p
+--     SET paidPrice = paidPrice - subtractAbleAmount
+--     FROM reducablePurchases r
+--     WHERE r.productID = p.productID
+--       AND r.shopperID = theShopperID
 --       AND r.tripTimestamp = p.tripTimestamp;
+    
+--     RETURN result;
+-- END;
+-- $$ LANGUAGE plpgsql;
+
+
+-- CREATE OR REPLACE FUNCTION statusToSubtractable(theShopperID INTEGER) RETURNS NUMERIC(2,1) 
+-- AS $$
+--     DECLARE 
+--     subtractAbleAmount NUMERIC(2,1);
+--     status CHAR;
+-- BEGIN
+--     SELECT sh.status INTO status FROM Shoppers sh WHERE sh.shopperID = theShopperID;
+--     IF status = 'L' THEN RETURN 0.5;
+--     ELSEIF status = 'M' THEN RETURN 1.0;
+--     ELSEIF status = 'H' THEN RETURN 2.0;
+--     ELSE RETURN 0;
+--     END IF;
+-- END;
+-- $$ LANGUAGE plpgsql;
+
+
+
+-- -- UPDATE Purchases p
+-- -- WHERE p.shopperID = shopperID 
+-- -- AND p.paidPrice < (SELECT products.regularPrice FROM Products products WHERE p.productID = products.productID)
+-- --     if numPriceReductions < 0 THEN BREAK
+-- --     ENDIF;
+
+-- -- Find shoppers who bought products at the same price
+-- -- SELECT pur.shopperID
+-- -- FROM Purchases pur, Products p
+-- -- WHERE pur.productID = p.productID
+-- --   AND pur.paidPrice = p.regularPrice;
+
+
+-- -- CREATE OR REPLACE VIEW reducablePurchases AS
+-- -- SELECT * FROM Purchases p 
+-- -- WHERE p.shopperID = 1005 
+-- --     AND p.paidPrice = (SELECT pro.regularPrice FROM Products pro
+-- --                         WHERE pro.productId = p.productID)
+-- -- ORDER BY p.paidPrice DESC
+-- -- LIMIT 3;
+
+-- --  UPDATE Purchases p
+-- --     SET paidPrice = p.paidPrice - 1
+-- --     FROM reducablePurchases r
+-- --     WHERE r.productID = p.productID
+-- --       AND r.shopperID = p.shopperID
+-- --       AND r.tripTimestamp = p.tripTimestamp;
+
+-- -- SELECT *
+-- -- FROM Purchases p, reducablePurchases r
+-- -- WHERE r.productID = p.productID
+-- --       AND r.shopperID = p.shopperID
+-- --       AND r.tripTimestamp = p.tripTimestamp;
    
 
 
 
--- CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction (theShopperID INTEGER, numPriceReductions INTEGER) RETURNS INTEGER
--- AS $$
--- BEGIN
--- DECLARE SECTION;
---     int marketID; int empCount;
--- EXEC SQL DECLARE c CURSOR FOR 
---     SELECT market, COUNT(*)
---     FROM EMPLOYEES
---     GROUP BY marketID;
--- EXEC SQL OPEN CURSOR c;
--- while(1) {
---     EXEC SQL FETCH c
+-- -- CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction (theShopperID INTEGER, numPriceReductions INTEGER) RETURNS INTEGER
+-- -- AS $$
+-- -- BEGIN
+-- -- DECLARE SECTION;
+-- --     int marketID; int empCount;
+-- -- EXEC SQL DECLARE c CURSOR FOR 
+-- --     SELECT market, COUNT(*)
+-- --     FROM EMPLOYEES
+-- --     GROUP BY marketID;
+-- -- EXEC SQL OPEN CURSOR c;
+-- -- while(1) {
+-- --     EXEC SQL FETCH c
 --         INTO :marketID, :empCount;
 --     if (NOT_FOUND) break;
 --     printf("Market %i has %i employees", marketID, empCount);
