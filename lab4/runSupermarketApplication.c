@@ -211,13 +211,13 @@ main(int argc, char **argv)
      /* Perform the call to getMarketEmpCounts described in Section 6 of Lab4.
       * getMarketEmpCounts doesn't return anything.
       */
-    getMarketEmpCounts(conn);
+    // getMarketEmpCounts(conn);
 
         
     /* Perform the calls to updateProductManufacturer described in Section 6
      * of Lab4, and print their outputs.
      */
-    updateProductManufacturer(conn, "Acme Cups Company", "Wiener");
+    // updateProductManufacturer(conn, "Acme Cups Company", "Wiener");
     
         
     /* Perform the calls to reduceSomePaidPrices described in Section 6
