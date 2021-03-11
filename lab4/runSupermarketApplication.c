@@ -59,6 +59,7 @@ static void bad_exit(PGconn *conn)
 void getMarketEmpCounts(PGconn *conn) {
     PGresult *res = PQexec(conn,"SELECT marketID, COUNT(*) FROM Employees GROUP BY marketID"); 
     if (PQresultStatus(res) != PGRES_TUPLES_OK){
+        printf("Error, in marketEmpCounts");
         PQclear(res);
         return;
     }
@@ -92,7 +93,8 @@ int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
     PGresult *res = PQexec(conn, "BEGIN TRANSACTION"); 
-    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+    if (PQresultStatus(res) != PGRES_COMMAND_OK){
+        printf("Error, in updateProductManufacturer, begin transaction");
         PQclear(res);
         return 0;
     }
@@ -101,6 +103,7 @@ int updateProductManufacturer(PGconn *conn,
     sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer = %s", oldProductManufacturer);
     res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_TUPLES_OK){
+        printf("Error, in updateProductManufacturer, select clause");
         PQclear(res);
         return 0;
     }
@@ -109,15 +112,17 @@ int updateProductManufacturer(PGconn *conn,
     // update
     sprintf(query, "UPDATE Products SET manufacturer = %s WHERE manufacturer = %s", newProductManufacturer, oldProductManufacturer);
     res = PQexec(conn, query); 
-    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+    if (PQresultStatus(res) != PGRES_COMMAND_OK){
         PQclear(res);
+        printf("Error, in updateProductManufacturer, update clause");
         return 0;
     }
 
     // commit
     res = PQexec(conn, "COMMIT"); 
-    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+    if (PQresultStatus(res) != PGRES_COMMAND_OK){
         PQclear(res);
+        printf("Error, in updateProductManufacturer, commit");
         return 0;
     }
     return atoi(num_replacements);
@@ -152,18 +157,20 @@ int updateProductManufacturer(PGconn *conn,
 
 int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions) {
     if (numPriceReductions < 0) {
-        printf("error numPriceReductions is less than 0");
+        printf("Error, numPriceReductions is less than 0");
         exit(EXIT_FAILURE);
     }
     char *query = (char*)malloc(40 * sizeof(char));
     sprintf(query, "call reduceSomePaidPricesFunction(%i, %i)", theShopperID, numPriceReductions);
 
 
-    PGresult *res = PQexec(conn,"SELECT marketID, COUNT(*) FROM Employees GROUP BY marketID"); 
-    if (PQresultStatus(res) == PGRES_TUPLES_OK){
+    PGresult *res = PQexec(conn,query); 
+    if (PQresultStatus(res) != PGRES_COMMAND_OK){
+        printf("Error: function error");
         PQclear(res);
-        return 0;
+        return 1;
     }
+    PQclear(res);
     return 1;
 }
 
@@ -206,7 +213,7 @@ main(int argc, char **argv)
     /* Perform the calls to updateProductManufacturer described in Section 6
      * of Lab4, and print their outputs.
      */
-    updateProductManufacturer(conn, "Acme Cups Company", "Weiner");
+    updateProductManufacturer(conn, "Acme Cups Company", "Wiener");
     
         
     /* Perform the calls to reduceSomePaidPrices described in Section 6
