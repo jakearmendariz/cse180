@@ -168,13 +168,14 @@ int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions)
 
 
     PGresult *res = PQexec(conn,query); 
-    if (PQresultStatus(res) != PGRES_COMMAND_OK){
-        printf("Error: function error\n");
+    if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK){
+        printf("Error in reduceSomePaidPrices, %s\n", PQresultErrorMessage(res));
+        PQclear(res);
+        return 1;
+    }else {
         PQclear(res);
         return 1;
     }
-    PQclear(res);
-    return 1;
 }
 
 int
