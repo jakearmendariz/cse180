@@ -57,7 +57,7 @@ static void bad_exit(PGconn *conn)
   * of employees who work at that market.
   */
 void getMarketEmpCounts(PGconn *conn) {
-    PGresult *res = PQexec(conn,"SELECT market, COUNT(*) FROM EMPLOYEES GROUP BY marketID"); 
+    PGresult *res = PQexec(conn,"SELECT marketID, COUNT(*) FROM Employees GROUP BY marketID"); 
     if (PQresultStatus(res) != PGRES_TUPLES_OK){
         PQclear(res);
         return;
@@ -91,9 +91,15 @@ void getMarketEmpCounts(PGconn *conn) {
 int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
+    PGresult *res = PQexec(conn, "BEGIN TRANSACTION"); 
+    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+        PQclear(res);
+        return 0;
+    }
+
     char *query = (char*)malloc(40 * sizeof(char));
-    sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer == %s", oldProductManufacturer);
-    PGresult *res = PQexec(conn, query); 
+    sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer = %s", oldProductManufacturer);
+    res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_TUPLES_OK){
         PQclear(res);
         return 0;
@@ -101,8 +107,15 @@ int updateProductManufacturer(PGconn *conn,
     char *num_replacements = PQgetvalue(res, 0, 0);
     PQclear(res);
     // update
-    sprintf(query, "UPDATE Products SET manufacturer = %s WHERE manufacturer == %s", newProductManufacturer, oldProductManufacturer);
+    sprintf(query, "UPDATE Products SET manufacturer = %s WHERE manufacturer = %s", newProductManufacturer, oldProductManufacturer);
     res = PQexec(conn, query); 
+    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+        PQclear(res);
+        return 0;
+    }
+
+    // commit
+    res = PQexec(conn, "COMMIT"); 
     if (PQresultStatus(res) != PGRES_TUPLES_OK){
         PQclear(res);
         return 0;
@@ -134,9 +147,24 @@ int updateProductManufacturer(PGconn *conn,
  * The reduceSomePaidPrices function must only invoke the Stored Function
  * reduceSomePaidPricesFunction, which does all of the work for this part of the
  * assignment; reduceSomePaidPrices should not do the work itself.
- */
-int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions) {
 
+ */
+
+int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions) {
+    if (numPriceReductions < 0) {
+        printf("error numPriceReductions is less than 0");
+        exit(EXIT_FAILURE);
+    }
+    char *query = (char*)malloc(40 * sizeof(char));
+    sprintf(query, "call reduceSomePaidPricesFunction(%i, %i)", theShopperID, numPriceReductions);
+
+
+    PGresult *res = PQexec(conn,"SELECT marketID, COUNT(*) FROM Employees GROUP BY marketID"); 
+    if (PQresultStatus(res) == PGRES_TUPLES_OK){
+        PQclear(res);
+        return 0;
+    }
+    return 1;
 }
 
 int
@@ -172,21 +200,21 @@ main(int argc, char **argv)
      /* Perform the call to getMarketEmpCounts described in Section 6 of Lab4.
       * getMarketEmpCounts doesn't return anything.
       */
+    getMarketEmpCounts(conn);
 
         
     /* Perform the calls to updateProductManufacturer described in Section 6
      * of Lab4, and print their outputs.
      */
+    updateProductManufacturer(conn, "Acme Cups Company", "Weiner");
     
         
     /* Perform the calls to reduceSomePaidPrices described in Section 6
      * of Lab4, and print their outputs.
      */
-  
+    reduceSomePaidPrices(conn, 1003, 2);
     
     good_exit(conn);
     return 0;
 
 }
-
-
