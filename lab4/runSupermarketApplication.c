@@ -100,7 +100,7 @@ int updateProductManufacturer(PGconn *conn,
     // }
 
     char *query = (char*)malloc(40 * sizeof(char));
-    sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer = %s", oldProductManufacturer);
+    sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer = '%s'", oldProductManufacturer);
     PGresult *res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_TUPLES_OK){
         printf("Error, in updateProductManufacturer, select clause\n");
@@ -110,7 +110,7 @@ int updateProductManufacturer(PGconn *conn,
     char *num_replacements = PQgetvalue(res, 0, 0);
     PQclear(res);
     // update
-    sprintf(query, "UPDATE Products SET manufacturer = %s WHERE manufacturer = %s", newProductManufacturer, oldProductManufacturer);
+    sprintf(query, "UPDATE Products SET manufacturer = '%s' WHERE manufacturer = '%s'", newProductManufacturer, oldProductManufacturer);
     res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_COMMAND_OK){
         PQclear(res);
