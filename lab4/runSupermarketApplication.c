@@ -33,15 +33,6 @@ static void bad_exit(PGconn *conn)
 }
 
 
-/* The three C functions that for Lab4 should appear below.
- * Write those functions, as described in Lab4 Section 4 (and Section 5,
- * which describes the Stored Function used by the third C function).
- *
- * Write the tests of those function in main, as described in Section 6
- * of Lab4.
- */
-
-
  /* getMarketEmpCounts:
   * marketID is an attribute in the Employees table, indicating the market at
   * which the employee works.  The only argument for the getMarketEmpCounts
@@ -204,15 +195,15 @@ main(int argc, char **argv)
     /* Perform the calls to reduceSomePaidPrices described in Section 6
      * of Lab4, and print their outputs.
      */
-    printf("Output of getMarketEmpCounts\n");
+    printf("Output of reduceSomePaidPrices\n");
     int a = reduceSomePaidPrices(conn, 3857, 2);
     int b = reduceSomePaidPrices(conn, 3857, 5);
     int c = reduceSomePaidPrices(conn, 2345, 3);
     int d = reduceSomePaidPrices(conn, 6228, 2);
-    printf("getMarketEmpCounts(%i, %i) => %i\n", 3857, 2, a);
-    printf("getMarketEmpCounts(%i, %i) => %i\n", 3857, 5, b);
-    printf("getMarketEmpCounts(%i, %i) => %i\n", 2345, 2, c);
-    printf("getMarketEmpCounts(%i, %i) => %i\n", 6228, 2, d);
+    printf("reduceSomePaidPrices(%i, %i) => %i\n", 3857, 2, a);
+    printf("reduceSomePaidPrices(%i, %i) => %i\n", 3857, 5, b);
+    printf("reduceSomePaidPrices(%i, %i) => %i\n", 2345, 2, c);
+    printf("reduceSomePaidPrices(%i, %i) => %i\n", 6228, 2, d);
     good_exit(conn);
     return 0;
 
@@ -223,19 +214,13 @@ main(int argc, char **argv)
 // Market 77 has 2 employees
 // Market 10 has 2 employees
 // Market 13 has 2 employees
-// num_replacements: 4
-// num_replacements: 0
 // Output of updateProductManufacturer when oldProductManufacturer is
 // 'Consolidated Noodles' and newProductManufacturer is 'Universal Pasta'
 // 4
 // 'Acme Coyote' and newProductManufacturer is 'Acme Roadrunner'
 // 0
-// Output of getMarketEmpCounts
-// reduceSomePaidPrices: 2 tuples
-// reduceSomePaidPrices: 1 tuples
-// reduceSomePaidPrices: 2 tuples
-// reduceSomePaidPrices: 1 tuples
-// getMarketEmpCounts(3857, 2) => 2
-// getMarketEmpCounts(3857, 5) => 1
-// getMarketEmpCounts(2345, 2) => 2
-// getMarketEmpCounts(6228, 2) => 1
+// Output of reduceSomePaidPrices
+// reduceSomePaidPrices(3857, 2) => 2
+// reduceSomePaidPrices(3857, 5) => 1
+// reduceSomePaidPrices(2345, 2) => 2
+// reduceSomePaidPrices(6228, 2) => 1
