@@ -54,11 +54,11 @@ BEGIN
         ORDER BY p.paidPrice DESC
         LIMIT '||$2||'';
 
-    SELECT COUNT(*) INTO result 
-    FROM reducablePurchases r, Purchases p
-    WHERE r.productID = p.productID
-      AND r.shopperID = theShopperID
-      AND r.tripTimestamp = p.tripTimestamp;
+    -- SELECT COUNT(*) INTO result 
+    -- FROM reducablePurchases r, Purchases p
+    -- WHERE r.productID = p.productID
+    --   AND r.shopperID = theShopperID
+    --   AND r.tripTimestamp = p.tripTimestamp;
 
     UPDATE Purchases p
     SET paidPrice = p.paidPrice - subtractAbleAmount
@@ -67,6 +67,7 @@ BEGIN
       AND r.shopperID = theShopperID
       AND r.tripTimestamp = p.tripTimestamp;
     
+    GET DIAGNOSTICS result = ROW_COUNT;
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;

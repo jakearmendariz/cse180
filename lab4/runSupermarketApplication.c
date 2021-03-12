@@ -160,7 +160,7 @@ int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions)
         printf("Error, numPriceReductions is less than 0");
         exit(EXIT_FAILURE);
     }
-    char *query = (char*)malloc(40 * sizeof(char));
+    char *query = (char*)malloc(90 * sizeof(char));
     sprintf(query, "SELECT reduceSomePaidPricesFunction(%i, %i)", theShopperID, numPriceReductions);
 
 
