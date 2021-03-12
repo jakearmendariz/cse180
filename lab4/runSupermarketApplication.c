@@ -65,7 +65,7 @@ void getMarketEmpCounts(PGconn *conn) {
     }
     int n = PQntuples(res);
     for (int j = 0; j < n; j++)
-        printf("\tMarket %s has %s employees\n",
+        printf("Market %s has %s employees\n",
         PQgetvalue(res, j, 0),
         PQgetvalue(res, j, 1) );
     PQclear(res);
@@ -102,7 +102,7 @@ int updateProductManufacturer(PGconn *conn,
         return 0;
     }
     int num_replacements = atoi(PQcmdTuples(res));
-    // PQclear(res);
+    PQclear(res);
     printf("num_replacements: %i\n", num_replacements);
     return num_replacements;
 }
@@ -211,11 +211,38 @@ main(int argc, char **argv)
     int b = reduceSomePaidPrices(conn, 3857, 5);
     int c = reduceSomePaidPrices(conn, 2345, 3);
     int d = reduceSomePaidPrices(conn, 6228, 2);
-    printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 3857, 2, a);
-    printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 3857, 5, b);
-    printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 2345, 2, c);
-    printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 6228, 2, d);
+    printf("getMarketEmpCounts(%i, %i) => %i\n", 3857, 2, a);
+    printf("getMarketEmpCounts(%i, %i) => %i\n", 3857, 5, b);
+    printf("getMarketEmpCounts(%i, %i) => %i\n", 2345, 2, c);
+    printf("getMarketEmpCounts(%i, %i) => %i\n", 6228, 2, d);
     good_exit(conn);
     return 0;
 
 }
+
+// Output of getMarketEmpCounts
+//         Market 88 has 4 employees
+//         Market 19 has 3 employees
+//         Market 77 has 2 employees
+//         Market 10 has 2 employees
+//         Market 13 has 2 employees
+// num_replacements: 4
+// num_replacements: 0
+// Output of updateProductManufacturer when oldProductManufacturer is
+// 'Consolidated Noodles' and newProductManufacturer is 'Universal Pasta'
+// 4
+// 'Acme Coyote' and newProductManufacturer is 'Acme Roadrunner'
+// 0
+// Output of getMarketEmpCounts
+// reduceSomePaidPrices: 2 tuples
+// reduceSomePaidPrices: 1 tuples
+// reduceSomePaidPrices: 2 tuples
+// reduceSomePaidPrices: 1 tuples
+
+// getMarketEmpCounts(3857, 2) => 2
+
+// getMarketEmpCounts(3857, 5) => 1
+
+// getMarketEmpCounts(2345, 2) => 2
+
+// getMarketEmpCounts(6228, 2) => 1
