@@ -89,17 +89,6 @@ void getMarketEmpCounts(PGconn *conn) {
  * updateProductManufacturer should return the number of Products whose
  * manufacturer was updated.
  */
-
-// DOES NOT WORK. NOT SURE WHY
-// CREATE OR REPLACE FUNCTION ROWCOUNT() RETURNS INTEGER
-// AS $$
-// DECLARE
-// rowCount INTEGER;
-// BEGIN
-//         GET DIAGNOSTICS rowCount = ROW_COUNT;
-//         RETURN rowCount;
-// END;
-// $$ LANGUAGE plpgsql;
 int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
