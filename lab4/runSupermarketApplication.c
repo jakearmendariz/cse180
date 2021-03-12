@@ -104,16 +104,16 @@ int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
 
-    char *query = (char*)malloc(40 * sizeof(char));
+    char *query = (char*)malloc(100 * sizeof(char));
     sprintf(query, "UPDATE Products SET manufacturer = '%s' WHERE manufacturer = '%s'", newProductManufacturer, oldProductManufacturer);
     PGresult *res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_COMMAND_OK){
-        
+        PQclear(res);
         printf("Error, in updateProductManufacturer, update clause\n");
         return 0;
     }
     int num_replacements = atoi(PQcmdTuples(res));
-    PQclear(res);
+    // PQclear(res);
     printf("num_replacements: %i\n", num_replacements);
     return num_replacements;
 }
@@ -153,17 +153,16 @@ int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions)
     char *query = (char*)malloc(90 * sizeof(char));
     sprintf(query, "SELECT reduceSomePaidPricesFunction(%i, %i)", theShopperID, numPriceReductions);
 
-
     PGresult *res = PQexec(conn,query); 
     if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK){
         printf("Error in reduceSomePaidPrices, %s\n", PQresultErrorMessage(res));
         PQclear(res);
-        return 1;
-    }else {
-        printf("reduceSomePaidPrices: %s tuples\n", PQgetvalue(res, 0, 0));
-        PQclear(res);
-        return 1;
+        return -1;
     }
+    int n = atoi(PQgetvalue(res, 0, 0));
+    printf("reduceSomePaidPrices: %i tuples\n", n);
+    PQclear(res);
+    return n;
 }
 
 int
@@ -218,12 +217,11 @@ main(int argc, char **argv)
     /* Perform the calls to reduceSomePaidPrices described in Section 6
      * of Lab4, and print their outputs.
      */
-
+    printf("Output of getMarketEmpCounts\n");
     int a = reduceSomePaidPrices(conn, 3857, 2);
     int b = reduceSomePaidPrices(conn, 3857, 5);
     int c = reduceSomePaidPrices(conn, 2345, 3);
     int d = reduceSomePaidPrices(conn, 6228, 2);
-    printf("Output of getMarketEmpCounts\n");
     printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 3857, 2, a);
     printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 3857, 5, b);
     printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 2345, 2, c);
