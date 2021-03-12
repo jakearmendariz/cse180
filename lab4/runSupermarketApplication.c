@@ -65,7 +65,7 @@ void getMarketEmpCounts(PGconn *conn) {
     }
     int n = PQntuples(res);
     for (int j = 0; j < n; j++)
-        printf("Market %s has %s employees\n",
+        printf("\tMarket %s has %s employees\n",
         PQgetvalue(res, j, 0),
         PQgetvalue(res, j, 1) );
     PQclear(res);
@@ -105,16 +105,6 @@ int updateProductManufacturer(PGconn *conn,
                               char *newProductManufacturer) {
 
     char *query = (char*)malloc(40 * sizeof(char));
-    // sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer = '%s'", oldProductManufacturer);
-    // PGresult *res = PQexec(conn, query); 
-    // if (PQresultStatus(res) != PGRES_TUPLES_OK){
-    //     printf("Error, in updateProductManufacturer, select clause\n");
-    //     PQclear(res);
-    //     return 0;
-    // }
-    // char *num_replacements = PQgetvalue(res, 0, 0);
-    // PQclear(res);
-    // update
     sprintf(query, "UPDATE Products SET manufacturer = '%s' WHERE manufacturer = '%s'", newProductManufacturer, oldProductManufacturer);
     PGresult *res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_COMMAND_OK){
@@ -209,20 +199,35 @@ main(int argc, char **argv)
      /* Perform the call to getMarketEmpCounts described in Section 6 of Lab4.
       * getMarketEmpCounts doesn't return anything.
       */
+    printf("Output of getMarketEmpCounts\n");
     getMarketEmpCounts(conn);
 
         
     /* Perform the calls to updateProductManufacturer described in Section 6
      * of Lab4, and print their outputs.
      */
-    updateProductManufacturer(conn, "Acme Cups Company", "Wiener");
+    int cn = updateProductManufacturer(conn, "Consolidated Noodles", "Universal Pasta");
+    int ac = updateProductManufacturer(conn, "Acme Coyote", "Acme Roadrunner");
+
+    printf("Output of updateProductManufacturer when oldProductManufacturer is\n");
+    printf("'Consolidated Noodles' and newProductManufacturer is 'Universal Pasta'\n%i\n", cn);
+    printf("'Acme Coyote' and newProductManufacturer is 'Acme Roadrunner'\n%i\n", ac);
+    
     
         
     /* Perform the calls to reduceSomePaidPrices described in Section 6
      * of Lab4, and print their outputs.
      */
-    reduceSomePaidPrices(conn, 1005, 2);
-    
+
+    int a = reduceSomePaidPrices(conn, 3857, 2);
+    int b = reduceSomePaidPrices(conn, 3857, 5);
+    int c = reduceSomePaidPrices(conn, 2345, 3);
+    int d = reduceSomePaidPrices(conn, 6228, 2);
+    printf("Output of getMarketEmpCounts\n");
+    printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 3857, 2, a);
+    printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 3857, 5, b);
+    printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 2345, 2, c);
+    printf("\ngetMarketEmpCounts(%i, %i) => %i\n", 6228, 2, d);
     good_exit(conn);
     return 0;
 
