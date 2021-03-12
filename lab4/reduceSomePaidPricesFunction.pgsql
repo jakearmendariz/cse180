@@ -19,15 +19,24 @@
 -- The first numPriceReductions purchases according to that ordering should have paidPrice
 -- reduced by the appropriate amount, based on the status of theShopper.
 
--- UPDATE Purchases p
--- WHERE p.shopperID = shopperID 
--- AND p.paidPrice < (SELECT products.regularPrice FROM Products products WHERE p.productID = products.productID)
---     if numPriceReductions < 0 THEN BREAK
---     ENDIF;
---     IF p.status = 'L' THEN SET p.paidPrice =  p.paidPrice - 0.5, numPriceReductions -=1
---     ELSEIF p.status = 'M' THEN SET  p.paidPrice =  p.paidPrice - 1, numPriceReductions -=1
---     ELIF p.status = 'H' THEN SET  p.paidPrice =  p.paidPrice - 2, numPriceReductions -=1
---     ENDIF;
+-- NUMBER OF PURCHASES BOUGHT FOR RETAIL PRICE BY CUSTOMER
+--  shopperid | count 
+-- -----------+-------
+--       1005 |     1
+--       1009 |     2
+--       1010 |     2
+--       1245 |     2
+--       2178 |     2
+--       2345 |     2
+--       3857 |     3
+--       6228 |     1
+-- (8 rows)
+-- -- Find shoppers who bought products at the same price
+-- SELECT pur.shopperID, COUNT(*)
+-- FROM Purchases pur, Products p
+-- WHERE pur.productID = p.productID
+--   AND pur.paidPrice = p.regularPrice
+-- GROUP BY pur.shopperID;
 
 CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction(theShopperID INTEGER, numPriceReductions INTEGER) RETURNS INTEGER
 AS $$
@@ -135,11 +144,7 @@ $$ LANGUAGE plpgsql;
 -- --     if numPriceReductions < 0 THEN BREAK
 -- --     ENDIF;
 
--- -- Find shoppers who bought products at the same price
--- -- SELECT pur.shopperID
--- -- FROM Purchases pur, Products p
--- -- WHERE pur.productID = p.productID
--- --   AND pur.paidPrice = p.regularPrice;
+
 
 
 -- -- CREATE OR REPLACE VIEW reducablePurchases AS
@@ -163,26 +168,6 @@ $$ LANGUAGE plpgsql;
 -- --       AND r.shopperID = p.shopperID
 -- --       AND r.tripTimestamp = p.tripTimestamp;
    
-
-
-
--- -- CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction (theShopperID INTEGER, numPriceReductions INTEGER) RETURNS INTEGER
--- -- AS $$
--- -- BEGIN
--- -- DECLARE SECTION;
--- --     int marketID; int empCount;
--- -- EXEC SQL DECLARE c CURSOR FOR 
--- --     SELECT market, COUNT(*)
--- --     FROM EMPLOYEES
--- --     GROUP BY marketID;
--- -- EXEC SQL OPEN CURSOR c;
--- -- while(1) {
--- --     EXEC SQL FETCH c
---         INTO :marketID, :empCount;
---     if (NOT_FOUND) break;
---     printf("Market %i has %i employees", marketID, empCount);
-
-
 
 
 

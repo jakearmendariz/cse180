@@ -89,46 +89,43 @@ void getMarketEmpCounts(PGconn *conn) {
  * updateProductManufacturer should return the number of Products whose
  * manufacturer was updated.
  */
+
+// DOES NOT WORK. NOT SURE WHY
+// CREATE OR REPLACE FUNCTION ROWCOUNT() RETURNS INTEGER
+// AS $$
+// DECLARE
+// rowCount INTEGER;
+// BEGIN
+//         GET DIAGNOSTICS rowCount = ROW_COUNT;
+//         RETURN rowCount;
+// END;
+// $$ LANGUAGE plpgsql;
 int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
-    // PGresult *res = PQexec(conn, "BEGIN TRANSACTION"); 
-    // if (PQresultStatus(res) != PGRES_COMMAND_OK){
-    //     printf("Error, in updateProductManufacturer, begin transaction\n");
+
+    char *query = (char*)malloc(40 * sizeof(char));
+    // sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer = '%s'", oldProductManufacturer);
+    // PGresult *res = PQexec(conn, query); 
+    // if (PQresultStatus(res) != PGRES_TUPLES_OK){
+    //     printf("Error, in updateProductManufacturer, select clause\n");
     //     PQclear(res);
     //     return 0;
     // }
-
-    char *query = (char*)malloc(40 * sizeof(char));
-    sprintf(query, "SELECT COUNT(*) FROM Products WHERE manufacturer = '%s'", oldProductManufacturer);
-    PGresult *res = PQexec(conn, query); 
-    if (PQresultStatus(res) != PGRES_TUPLES_OK){
-        printf("Error, in updateProductManufacturer, select clause\n");
-        PQclear(res);
-        return 0;
-    }
-    char *num_replacements = PQgetvalue(res, 0, 0);
-    PQclear(res);
+    // char *num_replacements = PQgetvalue(res, 0, 0);
+    // PQclear(res);
     // update
     sprintf(query, "UPDATE Products SET manufacturer = '%s' WHERE manufacturer = '%s'", newProductManufacturer, oldProductManufacturer);
-    res = PQexec(conn, query); 
+    PGresult *res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_COMMAND_OK){
-        PQclear(res);
+        
         printf("Error, in updateProductManufacturer, update clause\n");
         return 0;
     }
-
-    // commit
-    // res = PQexec(conn, "COMMIT"); 
-    // if (PQresultStatus(res) != PGRES_COMMAND_OK){
-    //     PQclear(res);
-    //     printf("Error, in updateProductManufacturer, commit\n");
-    //     return 0;
-    // }
+    int num_replacements = atoi(PQcmdTuples(res));
     PQclear(res);
-    printf("num_replacesments: %i\n", atoi(num_replacements));
-    // free(query);
-    return atoi(num_replacements);
+    printf("num_replacements: %i\n", num_replacements);
+    return num_replacements;
 }
 
 
@@ -212,13 +209,13 @@ main(int argc, char **argv)
      /* Perform the call to getMarketEmpCounts described in Section 6 of Lab4.
       * getMarketEmpCounts doesn't return anything.
       */
-    // getMarketEmpCounts(conn);
+    getMarketEmpCounts(conn);
 
         
     /* Perform the calls to updateProductManufacturer described in Section 6
      * of Lab4, and print their outputs.
      */
-    // updateProductManufacturer(conn, "Acme Cups Company", "Wiener");
+    updateProductManufacturer(conn, "Acme Cups Company", "Wiener");
     
         
     /* Perform the calls to reduceSomePaidPrices described in Section 6
