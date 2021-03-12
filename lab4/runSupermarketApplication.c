@@ -103,7 +103,6 @@ int updateProductManufacturer(PGconn *conn,
     }
     int num_replacements = atoi(PQcmdTuples(res));
     PQclear(res);
-    printf("num_replacements: %i\n", num_replacements);
     return num_replacements;
 }
 
@@ -149,7 +148,6 @@ int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions)
         return -1;
     }
     int n = atoi(PQgetvalue(res, 0, 0));
-    printf("reduceSomePaidPrices: %i tuples\n", n);
     PQclear(res);
     return n;
 }
@@ -219,13 +217,12 @@ main(int argc, char **argv)
     return 0;
 
 }
-
 // Output of getMarketEmpCounts
-//         Market 88 has 4 employees
-//         Market 19 has 3 employees
-//         Market 77 has 2 employees
-//         Market 10 has 2 employees
-//         Market 13 has 2 employees
+// Market 88 has 4 employees
+// Market 19 has 3 employees
+// Market 77 has 2 employees
+// Market 10 has 2 employees
+// Market 13 has 2 employees
 // num_replacements: 4
 // num_replacements: 0
 // Output of updateProductManufacturer when oldProductManufacturer is
@@ -238,11 +235,7 @@ main(int argc, char **argv)
 // reduceSomePaidPrices: 1 tuples
 // reduceSomePaidPrices: 2 tuples
 // reduceSomePaidPrices: 1 tuples
-
 // getMarketEmpCounts(3857, 2) => 2
-
 // getMarketEmpCounts(3857, 5) => 1
-
 // getMarketEmpCounts(2345, 2) => 2
-
 // getMarketEmpCounts(6228, 2) => 1
