@@ -14,7 +14,7 @@ COPY Shoppers FROM stdin USING DELIMITERS '|';
 2345|\N| 498 Chaboya Road|\N|L
 2178|David Barbara| 729 Coe Avenue|\N|H
 9134|Chen Wang| 983 Dana Avenue|2015-01-09|L
-3857|Darshan Singh|984 Cory Avenue|2016-01-04|H
+3857|Darshan Singh|984 Cory Avenue|2016-01-04|NULL
 \.
 
 

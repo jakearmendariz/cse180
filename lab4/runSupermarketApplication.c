@@ -186,9 +186,8 @@ main(int argc, char **argv)
     int cn = updateProductManufacturer(conn, "Consolidated Noodles", "Universal Pasta");
     int ac = updateProductManufacturer(conn, "Acme Coyote", "Acme Roadrunner");
 
-    printf("Output of updateProductManufacturer when oldProductManufacturer is\n");
-    printf("'Consolidated Noodles' and newProductManufacturer is 'Universal Pasta'\n%i\n", cn);
-    printf("'Acme Coyote' and newProductManufacturer is 'Acme Roadrunner'\n%i\n", ac);
+    printf("Output of updateProductManufacturer when oldProductManufacturer is 'Consolidated Noodles' and newProductManufacturer is 'Universal Pasta'\n%i\n", cn);
+    printf("Output of updateProductManufacturer when oldProductManufacturer is 'Acme Coyote' and newProductManufacturer is 'Acme Roadrunner'\n%i\n", ac);
     
     
         
