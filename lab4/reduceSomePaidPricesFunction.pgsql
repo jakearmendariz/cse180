@@ -41,6 +41,8 @@ BEGIN
       AND r.tripTimestamp = p.tripTimestamp;
     
     GET DIAGNOSTICS result = ROW_COUNT;
+    IF subtractAbleAmount = 0 THEN result := 0;
+    END IF;
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;
