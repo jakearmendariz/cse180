@@ -1,21 +1,4 @@
--- NUMBER OF PURCHASES BOUGHT FOR RETAIL PRICE BY CUSTOMER
---  shopperid | count 
--- -----------+-------
---       1005 |     1
---       1009 |     2
---       1010 |     2
---       1245 |     2
---       2178 |     2
---       2345 |     2
---       3857 |     3
---       6228 |     1
--- (8 rows)
--- -- Find shoppers who bought products at the same price
--- SELECT pur.shopperID, COUNT(*)
--- FROM Purchases pur, Products p
--- WHERE pur.productID = p.productID
---   AND pur.paidPrice = p.regularPrice
--- GROUP BY pur.shopperID;
+-- Jake Armendariz
 
 CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction(theShopperID INTEGER, numPriceReductions INTEGER) RETURNS INTEGER
 AS $$
@@ -24,7 +7,9 @@ AS $$
     result INTEGER;
     ass INTEGER;
 BEGIN  
+    -- Find the value we are suppose to subtract for each shopper
     SELECT INTO subtractAbleAmount statusToSubtractable(theShopperID);
+    -- Build a view, this view should have the the list of purchases paid at regular price, by theShopperID sorted in descending order with a limit
     EXECUTE 'CREATE OR REPLACE VIEW reducablePurchases AS
         SELECT * FROM Purchases p 
         WHERE p.shopperID = ' ||$1||'
@@ -32,14 +17,14 @@ BEGIN
                                 WHERE pro.productId = p.productID)
         ORDER BY p.paidPrice DESC
         LIMIT '||$2||'';
-
+    -- Update the values from the view
     UPDATE Purchases p
     SET paidPrice = p.paidPrice - subtractAbleAmount
     FROM reducablePurchases r
     WHERE r.productID = p.productID
       AND r.shopperID = theShopperID
       AND r.tripTimestamp = p.tripTimestamp;
-    
+    -- Count the rows affected by the update
     GET DIAGNOSTICS result = ROW_COUNT;
     IF subtractAbleAmount = 0 THEN result := 0;
     END IF;
@@ -47,7 +32,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
+-- From the status char, we need to find the subtractable amount if they paid full price for an item
 CREATE OR REPLACE FUNCTION statusToSubtractable(theShopperID INTEGER) RETURNS NUMERIC(2,1) 
 AS $$
     DECLARE 

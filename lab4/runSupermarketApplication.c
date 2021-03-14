@@ -1,5 +1,7 @@
 /**
  * runSupermarketApplication skeleton, to be modified by students
+ * 
+ * Jake Armendariz
  */
 
 #include <stdio.h>
@@ -49,13 +51,13 @@ static void bad_exit(PGconn *conn)
   */
 void getMarketEmpCounts(PGconn *conn) {
     PGresult *res = PQexec(conn,"SELECT marketID, COUNT(*) FROM Employees GROUP BY marketID"); 
-    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+    if (PQresultStatus(res) != PGRES_TUPLES_OK){ // query unsuccessful
         printf("Error, in marketEmpCounts\n");
         PQclear(res);
-        return;
+        bad_exit(conn);
     }
     int n = PQntuples(res);
-    for (int j = 0; j < n; j++)
+    for (int j = 0; j < n; j++) //Print each of the results, row by row
         printf("Market %s has %s employees\n",
         PQgetvalue(res, j, 0),
         PQgetvalue(res, j, 1) );
@@ -83,14 +85,15 @@ void getMarketEmpCounts(PGconn *conn) {
 int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
-    if ( oldProductManufacturer == NULL || newProductManufacturer == NULL) {
+    // if either parameter is null, exit
+    if (oldProductManufacturer == NULL || newProductManufacturer == NULL) {
         printf("Error, one of the arguments passed into updateProductManufacturer was null\n");
-        exit(EXIT_FAILURE);
+        bad_exit(conn);
     }
-    // Check to make sure the strings are normal length
+    // Check to make sure the strings are normal length, anything longer would cause error in malloc
     if(strlen(oldProductManufacturer) + strlen(newProductManufacturer) > 194) {
         printf("Error, the length of oldProductManufacturer and newProductManufacturer were too long, max size is 194 characters total\n");
-        exit(EXIT_FAILURE);
+        bad_exit(conn);
     }
     char *query = (char*)malloc(255 * sizeof(char));
     //61 base characters. 255 - 61 => 194. So max length of input strings is 194
@@ -99,8 +102,9 @@ int updateProductManufacturer(PGconn *conn,
     if (PQresultStatus(res) != PGRES_COMMAND_OK){
         PQclear(res);
         printf("Error, in updateProductManufacturer, update clause\n");
-        return 0;
+        bad_exit(conn);
     }
+    // gets the amount of updated tuples, converts to integer
     int num_replacements = atoi(PQcmdTuples(res));
     PQclear(res);
     return num_replacements;
@@ -134,22 +138,24 @@ int updateProductManufacturer(PGconn *conn,
  */
 
 int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions) {
+    // make sure that both values are valid, exit if not
     if (numPriceReductions < 0) {
         printf("Error, numPriceReductions is less than 0\n");
-        exit(EXIT_FAILURE);
+        bad_exit(conn);
     }else if (theShopperID < 0) {
         printf("Error, theShopperID is less than 0\n");
-        exit(EXIT_FAILURE);
+        bad_exit(conn);
     }
     char *query = (char*)malloc(90 * sizeof(char));
     sprintf(query, "SELECT reduceSomePaidPricesFunction(%i, %i)", theShopperID, numPriceReductions);
-
+    // calls the function, and check if successful
     PGresult *res = PQexec(conn,query); 
     if (PQresultStatus(res) != PGRES_TUPLES_OK){
         printf("Error in reduceSomePaidPrices, %s\n", PQresultErrorMessage(res));
         PQclear(res);
-        return -1;
+        bad_exit(conn);
     }
+    // Only one value should be returned: number of price reductions preformed
     int n = atoi(PQgetvalue(res, 0, 0));
     PQclear(res);
     return n;
