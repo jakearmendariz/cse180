@@ -83,8 +83,7 @@ void getMarketEmpCounts(PGconn *conn) {
 int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
-
-    char *query = (char*)malloc(100 * sizeof(char));
+    char *query = (char*)malloc(255 * sizeof(char));
     sprintf(query, "UPDATE Products SET manufacturer = '%s' WHERE manufacturer = '%s'", newProductManufacturer, oldProductManufacturer);
     PGresult *res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_COMMAND_OK){
@@ -126,14 +125,17 @@ int updateProductManufacturer(PGconn *conn,
 
 int reduceSomePaidPrices(PGconn *conn, int theShopperID, int numPriceReductions) {
     if (numPriceReductions < 0) {
-        printf("Error, numPriceReductions is less than 0");
+        printf("Error, numPriceReductions is less than 0\n");
+        exit(EXIT_FAILURE);
+    }else if (theShopperID < 0) {
+        printf("Error, theShopperID is less than 0\n");
         exit(EXIT_FAILURE);
     }
     char *query = (char*)malloc(90 * sizeof(char));
     sprintf(query, "SELECT reduceSomePaidPricesFunction(%i, %i)", theShopperID, numPriceReductions);
 
     PGresult *res = PQexec(conn,query); 
-    if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK){
+    if (PQresultStatus(res) != PGRES_TUPLES_OK){
         printf("Error in reduceSomePaidPrices, %s\n", PQresultErrorMessage(res));
         PQclear(res);
         return -1;
@@ -207,19 +209,19 @@ main(int argc, char **argv)
     return 0;
 
 }
+
 // Output of getMarketEmpCounts
 // Market 88 has 4 employees
 // Market 19 has 3 employees
 // Market 77 has 2 employees
 // Market 10 has 2 employees
 // Market 13 has 2 employees
-// Output of updateProductManufacturer when oldProductManufacturer is
-// 'Consolidated Noodles' and newProductManufacturer is 'Universal Pasta'
+// Output of updateProductManufacturer when oldProductManufacturer is 'Consolidated Noodles' and newProductManufacturer is 'Universal Pasta'
 // 4
-// 'Acme Coyote' and newProductManufacturer is 'Acme Roadrunner'
+// Output of updateProductManufacturer when oldProductManufacturer is 'Acme Coyote' and newProductManufacturer is 'Acme Roadrunner'
 // 0
 // Output of reduceSomePaidPrices
 // reduceSomePaidPrices(3857, 2) => 2
 // reduceSomePaidPrices(3857, 5) => 1
 // reduceSomePaidPrices(2345, 2) => 2
-// reduceSomePaidPrices(6228, 2) => 1
+// reduceSomePaidPrices(6228, 2) => 0
