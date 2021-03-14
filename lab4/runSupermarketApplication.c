@@ -83,7 +83,17 @@ void getMarketEmpCounts(PGconn *conn) {
 int updateProductManufacturer(PGconn *conn,
                               char *oldProductManufacturer,
                               char *newProductManufacturer) {
+    if ( oldProductManufacturer == NULL || newProductManufacturer == NULL) {
+        printf("Error, one of the arguments passed into updateProductManufacturer was null\n");
+        exit(EXIT_FAILURE);
+    }
+    // Check to make sure the strings are normal length
+    if(strlen(oldProductManufacturer) + strlen(newProductManufacturer) > 194) {
+        printf("Error, the length of oldProductManufacturer and newProductManufacturer were too long, max size is 194 characters total\n");
+        exit(EXIT_FAILURE);
+    }
     char *query = (char*)malloc(255 * sizeof(char));
+    //61 base characters. 255 - 61 => 194. So max length of input strings is 194
     sprintf(query, "UPDATE Products SET manufacturer = '%s' WHERE manufacturer = '%s'", newProductManufacturer, oldProductManufacturer);
     PGresult *res = PQexec(conn, query); 
     if (PQresultStatus(res) != PGRES_COMMAND_OK){
