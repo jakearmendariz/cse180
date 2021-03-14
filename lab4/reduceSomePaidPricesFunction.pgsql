@@ -11,11 +11,11 @@
 --       6228 |     1
 -- (8 rows)
 -- -- Find shoppers who bought products at the same price
--- SELECT pur.shopperID, COUNT(*)
--- FROM Purchases pur, Products p
--- WHERE pur.productID = p.productID
---   AND pur.paidPrice = p.regularPrice
--- GROUP BY pur.shopperID;
+SELECT pur.shopperID, COUNT(*)
+FROM Purchases pur, Products p
+WHERE pur.productID = p.productID
+  AND pur.paidPrice = p.regularPrice
+GROUP BY pur.shopperID;
 
 CREATE OR REPLACE FUNCTION reduceSomePaidPricesFunction(theShopperID INTEGER, numPriceReductions INTEGER) RETURNS INTEGER
 AS $$
